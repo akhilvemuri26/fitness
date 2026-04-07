@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Connections</p>
+    <h2>Source configuration and sync health</h2>
+  </div>
+</section>
+
+<section class="grid three-up">
+  {% for source in sources %}
+  <article class="card connection-card">
+    <h3>{{ source.label }}</h3>
+    <p>{{ source.description }}</p>
+    <div class="pill-row">
+      <span class="tone tone-{{ source.freshness_tone }}">{{ source.freshness_label }}</span>
+      <span class="tone tone-outline">{{ source.sync_model }}</span>
+    </div>
+    <dl class="meta">
+      <div><dt>Status</dt><dd>{{ source.status_label }}</dd></div>
+      <div><dt>Sync Source</dt><dd class="meta-copy">{{ source.sync_source }}</dd></div>
+      <div><dt>Last sync</dt><dd>{{ source.last_synced_at or "Never" }}</dd></div>
+      <div><dt>Cursor</dt><dd>{{ source.cursor or "Not set" }}</dd></div>
+    </dl>
+    <p class="supporting-copy">{{ source.freshness_hint }}</p>
+    {% if source.error_message %}
+      <p class="error-copy">{{ source.error_message }}</p>
+    {% endif %}
+    {% if source.action_href %}
+      {% if source.action_href == "/actions/sync/hevy" or source.action_href == "/actions/sync/whoop" %}
+        <form action="{{ source.action_href }}" method="post" class="action-row">
+          <button type="submit">{{ source.action_label }}</button>
+        </form>
+      {% else %}
+        <div class="action-row">
+          <a class="button-link" href="{{ source.action_href }}">{{ source.action_label }}</a>
+        </div>
+      {% endif %}
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

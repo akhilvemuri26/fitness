@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Legal (mock)</p>
+      <h2>Privacy Policy</h2>
+      <p class="lede">
+        This is placeholder text for development and demos only. It is not legal advice and does not
+        describe real data practices.
+      </p>
+    </div>
+  </div>
+  <article class="card legal-doc">
+    <p><strong>Effective date:</strong> April 6, 2026 &nbsp;·&nbsp; <strong>Version:</strong> Mock 0.1</p>
+
+    <h2>1. Overview</h2>
+    <p>
+      Fitness Hub (“we,” “us”) is a personal dashboard that aggregates health and activity information
+      you choose to connect. This mock policy summarizes—in plain language—what a production policy might
+      cover. Replace all of this before shipping to users.
+    </p>
+
+    <h2>2. Information we might collect</h2>
+    <ul>
+      <li>Account identifiers you use to sign in or link third-party apps (for example, OAuth tokens).</li>
+      <li>Activity, sleep, recovery, or nutrition metrics supplied by connected services.</li>
+      <li>Technical data such as IP address, browser type, and approximate timestamps of requests.</li>
+    </ul>
+
+    <h2>3. How we use information</h2>
+    <ul>
+      <li>To display your dashboard and trends.</li>
+      <li>To keep integrations authorized and refresh data according to your settings.</li>
+      <li>To operate, secure, and improve the service (for example, error logs in development).</li>
+    </ul>
+
+    <h2>4. Third-party services</h2>
+    <p>
+      When you connect external providers (wearables, food logs, etc.), their privacy policies govern how
+      they collect and share data with apps like this one. We only receive what you authorize through
+      those connections.
+    </p>
+
+    <h2>5. Retention</h2>
+    <p>
+      In a real product, we would describe how long tokens, logs, and derived metrics are stored and how
+      you can delete them. For this mock, assume data is kept only as long as needed for the demo.
+    </p>
+
+    <h2>6. Your choices</h2>
+    <p>
+      A production policy would explain how to disconnect integrations, export data, or request deletion.
+      Contact your engineering or legal team before relying on this page.
+    </p>
+
+    <h2>7. Contact</h2>
+    <p>For this mock deployment, use your project maintainer’s email or support channel—not this text.</p>
+  </article>
+{% endblock %}

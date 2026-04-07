@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title or "Fitness Hub" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+  </head>
+  <body>
+    <div class="shell">
+      <header class="site-header">
+        <div class="brand-block">
+          <p class="eyebrow">Unified Health Data</p>
+          <h1><a href="/">Fitness Hub</a></h1>
+        </div>
+        <nav class="site-nav">
+          <a href="/">Dashboard</a>
+          <a href="/connections">Connections</a>
+          <a href="/privacy">Privacy</a>
+        </nav>
+      </header>
+      <main>
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fitness-hub"
+version = "0.1.0"
+description = "Unified personal health and fitness data hub"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "alembic>=1.14.0",
+  "apscheduler>=3.10.4",
+  "fastapi>=0.115.0",
+  "httpx>=0.28.0",
+  "jinja2>=3.1.4",
+  "psycopg[binary]>=3.2.3",
+  "pydantic-settings>=2.6.1",
+  "python-dateutil>=2.9.0.post0",
+  "python-multipart>=0.0.12",
+  "sqlalchemy>=2.0.36",
+  "starlette>=0.41.2",
+  "tenacity>=9.0.0",
+  "tzdata>=2024.2",
+  "uvicorn>=0.32.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.3",
+  "pytest-cov>=6.0.0",
+]
+mfp = [
+  "myfitnesspal @ git+https://github.com/coddingtonbear/python-myfitnesspal.git",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

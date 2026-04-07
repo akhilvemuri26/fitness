@@ -1,0 +1,39 @@
+name: Hosted Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0,30 8-23 * * *"
+      timezone: "America/Indiana/Indianapolis"
+
+permissions: {}
+
+jobs:
+  hosted-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Warm app
+        env:
+          APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
+        run: |
+          curl --fail --show-error --silent --retry 3 --retry-all-errors \
+            "${APP_BASE_URL%/}/healthz" >/dev/null
+
+      - name: Sync WHOOP
+        env:
+          APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
+          INTERNAL_SYNC_TOKEN: ${{ secrets.INTERNAL_SYNC_TOKEN }}
+        run: |
+          curl --fail --show-error --silent --retry 3 --retry-all-errors \
+            -X POST "${APP_BASE_URL%/}/internal/sync/whoop/reconcile" \
+            -H "X-Internal-Token: ${INTERNAL_SYNC_TOKEN}"
+
+      - name: Sync Hevy
+        env:
+          APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
+          INTERNAL_SYNC_TOKEN: ${{ secrets.INTERNAL_SYNC_TOKEN }}
+        run: |
+          curl --fail --show-error --silent --retry 3 --retry-all-errors \
+            -X POST "${APP_BASE_URL%/}/internal/sync/hevy" \
+            -H "X-Internal-Token: ${INTERNAL_SYNC_TOKEN}"

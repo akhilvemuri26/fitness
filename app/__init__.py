@@ -1,0 +1,2 @@
+"""Fitness Hub application package."""
+

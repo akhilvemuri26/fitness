@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Daily Summary</p>
+    <h2>{{ dashboard.selected_date }}</h2>
+    <p class="lede">
+      A unified view of nutrition, workouts, recovery, sleep, and body metrics.
+    </p>
+  </div>
+  <form method="get" class="date-picker">
+    <label for="date">Jump to date</label>
+    <input id="date" name="date" type="date" value="{{ dashboard.selected_date }}">
+    <button type="submit">Load</button>
+  </form>
+</section>
+
+<section class="grid two-up">
+  <article class="card">
+    <h3>Nutrition</h3>
+    <dl class="stats">
+      <div><dt>Calories</dt><dd>{{ dashboard.nutrition.calories }}</dd></div>
+      <div><dt>Protein</dt><dd>{{ dashboard.nutrition.protein }} g</dd></div>
+      <div><dt>Carbs</dt><dd>{{ dashboard.nutrition.carbs }} g</dd></div>
+      <div><dt>Fat</dt><dd>{{ dashboard.nutrition.fat }} g</dd></div>
+      <div><dt>Water</dt><dd>{{ dashboard.nutrition.water_ml }} ml</dd></div>
+      <div><dt>Weight</dt><dd>{{ dashboard.nutrition.weight }}</dd></div>
+    </dl>
+  </article>
+  <article class="card">
+    <h3>Recovery & Sleep</h3>
+    <dl class="stats">
+      <div><dt>Recovery</dt><dd>{{ dashboard.recovery.recovery_score }}</dd></div>
+      <div><dt>HRV</dt><dd>{{ dashboard.recovery.hrv_ms }}</dd></div>
+      <div><dt>Resting HR</dt><dd>{{ dashboard.recovery.resting_hr }}</dd></div>
+      <div><dt>Sleep Need</dt><dd>{{ dashboard.sleep.sleep_need_minutes }} min</dd></div>
+      <div><dt>Sleep Time</dt><dd>{{ dashboard.sleep.total_sleep_minutes }} min</dd></div>
+      <div><dt>Efficiency</dt><dd>{{ dashboard.sleep.sleep_efficiency }}</dd></div>
+    </dl>
+  </article>
+</section>
+
+<section class="grid two-up">
+  <article class="card">
+    <h3>Strain & Body Metrics</h3>
+    <dl class="stats">
+      <div><dt>Cycle Strain</dt><dd>{{ dashboard.cycle.strain }}</dd></div>
+      <div><dt>Avg HR</dt><dd>{{ dashboard.cycle.avg_hr }}</dd></div>
+      <div><dt>Max HR</dt><dd>{{ dashboard.body.max_heart_rate }}</dd></div>
+      <div><dt>Body Weight</dt><dd>{{ dashboard.body.weight }}</dd></div>
+      <div><dt>Height</dt><dd>{{ dashboard.body.height }}</dd></div>
+    </dl>
+  </article>
+  <article class="card">
+    <h3>Workouts</h3>
+    {% if dashboard.workouts %}
+      <ul class="stack">
+        {% for workout in dashboard.workouts %}
+          <li class="workout">
+            <div>
+              <strong>{{ workout.title }}</strong>
+              <p>{{ workout.started_at }} to {{ workout.ended_at }}</p>
+              <p>{{ workout.exercise_count }} exercises · {{ workout.set_count }} sets</p>
+            </div>
+            <div class="badge">
+              {% if workout.whoop_strain is not none %}
+                WHOOP {{ workout.whoop_strain }}
+              {% else %}
+                Unlinked
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty">No workouts linked for this day yet.</p>
+    {% endif %}
+  </article>
+</section>
+
+<section class="card">
+  <h3>Sync Status</h3>
+  <ul class="stack">
+    {% for source in sync_status %}
+      <li class="status-row">
+        <div>
+          <strong>{{ source.label }}</strong>
+          <p>{{ source.state }} · {{ source.state_detail }}</p>
+          <p class="status-subcopy">{{ source.sync_model }}</p>
+        </div>
+        <span class="tone tone-{{ source.freshness_tone }}">{{ source.last_synced_at or "Never" }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

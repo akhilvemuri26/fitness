@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+__pycache__
+.pytest_cache
+fitness.db
+.env
+tests
+*.pyc
+*.pyo
+*.pyd
+*.egg-info
