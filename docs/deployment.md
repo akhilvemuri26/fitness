@@ -42,7 +42,9 @@ MyFitnessPal stays local for now and syncs from your Mac.
 The container boot command is already defined in `scripts/start_server.sh` and runs:
 
 - `alembic upgrade head`
-- `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- `uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"`
+
+Railway terminates HTTPS before forwarding requests to the container, so the startup command trusts forwarded proxy headers to preserve the correct `https` scheme in generated URLs.
 
 ## 4. Update WHOOP Redirect URI
 
