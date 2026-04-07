@@ -4,7 +4,7 @@
 
 This app is set up for a free-first deployment using:
 
-- Koyeb for the FastAPI web service
+- Railway for the FastAPI web service
 - Neon for PostgreSQL
 - GitHub Actions for hosted WHOOP and Hevy sync triggers
 
@@ -20,15 +20,15 @@ MyFitnessPal stays local for now and syncs from your Mac.
 - Create a Neon project and copy the connection string.
 - Use the pooled or direct `postgresql://...` URL as `DATABASE_URL`.
 
-## 3. Create Koyeb App
+## 3. Create Railway Service
 
-- Create a new Web Service from the GitHub repository.
-- Let Koyeb build from the included `Dockerfile`.
-- Use the free instance type.
+- Create a new Railway project from the GitHub repository.
+- Add a service that builds from the included `Dockerfile`.
+- Keep the service on the free plan/resource allowance.
 - Set the health check path to `/healthz`.
 - Set the environment variables:
   - `APP_ENV=production`
-  - `APP_BASE_URL=https://<your-koyeb-domain>`
+  - `APP_BASE_URL=https://<your-railway-domain>`
   - `DATABASE_URL=<your-neon-url>`
   - `ENABLE_SCHEDULER=false`
   - `ENABLE_WHOOP_WEBHOOKS=false`
@@ -36,7 +36,7 @@ MyFitnessPal stays local for now and syncs from your Mac.
   - `MFP_BRIDGE_SHARED_TOKEN=<random-secret>`
   - `WHOOP_CLIENT_ID=<your-whoop-client-id>`
   - `WHOOP_CLIENT_SECRET=<your-whoop-client-secret>`
-  - `WHOOP_REDIRECT_URI=https://<your-koyeb-domain>/connect/whoop/callback`
+  - `WHOOP_REDIRECT_URI=https://<your-railway-domain>/connect/whoop/callback`
   - `HEVY_API_KEY=<your-hevy-api-key>`
 
 The container boot command is already defined in `scripts/start_server.sh` and runs:
@@ -47,14 +47,21 @@ The container boot command is already defined in `scripts/start_server.sh` and r
 ## 4. Update WHOOP Redirect URI
 
 - In the WHOOP developer dashboard, add the hosted callback URI:
-  - `https://<your-koyeb-domain>/connect/whoop/callback`
+  - `https://<your-railway-domain>/connect/whoop/callback`
 
 ## 5. Configure GitHub Actions Secrets
 
 Add these repository secrets:
 
-- `APP_BASE_URL=https://<your-koyeb-domain>`
-- `INTERNAL_SYNC_TOKEN=<same-token-used-in-koyeb>`
+- `APP_BASE_URL=https://<your-railway-domain>`
+- `INTERNAL_SYNC_TOKEN=<same-token-used-in-railway>`
+
+`APP_BASE_URL` must be the public origin only.
+Example:
+
+- correct: `https://your-app.up.railway.app`
+- wrong: `https://your-app.up.railway.app/healthz`
+- wrong: `https://your-app.up.railway.app/dashboard`
 
 The scheduled workflow in `.github/workflows/hosted-sync.yml` will then:
 
@@ -66,8 +73,8 @@ The scheduled workflow in `.github/workflows/hosted-sync.yml` will then:
 
 On your Mac, keep `.env` configured with:
 
-- `MFP_BRIDGE_BASE_URL=https://<your-koyeb-domain>`
-- `MFP_BRIDGE_SHARED_TOKEN=<same-token-used-in-koyeb>`
+- `MFP_BRIDGE_BASE_URL=https://<your-railway-domain>`
+- `MFP_BRIDGE_SHARED_TOKEN=<same-token-used-in-railway>`
 - `MFP_COOKIE_HEADER=...` or `MFP_COOKIE_FILE=...`
 - `MFP_SYNC_WINDOW_DAYS=3`
 
@@ -78,3 +85,8 @@ Install the local scheduler:
 ```
 
 This installs a `launchd` agent that runs every 30 minutes and only syncs between `8:00 AM` and `11:30 PM` in your configured timezone.
+
+## 7. Railway Notes
+
+- Free hosting on Railway depends on the currently available free monthly allowance, so keep an eye on usage.
+- The app may cold start after inactivity, but the GitHub Actions workflow already warms `/healthz` before triggering WHOOP and Hevy syncs.

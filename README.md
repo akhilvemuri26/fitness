@@ -36,8 +36,8 @@ uvicorn app.main:app --reload
 
 - Deploy the app using the included `Dockerfile`.
 - Use Neon Postgres for `DATABASE_URL`.
-- On Koyeb, set `ENABLE_SCHEDULER=false` and let GitHub Actions drive hosted WHOOP and Hevy syncs.
-- Use [docs/deployment.md](docs/deployment.md) for the full Koyeb + Neon + GitHub Actions setup.
+- On Railway, set `ENABLE_SCHEDULER=false` and let GitHub Actions drive hosted WHOOP and Hevy syncs.
+- Use [docs/deployment.md](docs/deployment.md) for the full Railway + Neon + GitHub Actions setup.
 
 ## Project Layout
 

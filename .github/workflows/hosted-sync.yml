@@ -17,23 +17,54 @@ jobs:
         env:
           APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
         run: |
-          curl --fail --show-error --silent --retry 3 --retry-all-errors \
-            "${APP_BASE_URL%/}/healthz" >/dev/null
+          BASE_URL="${APP_BASE_URL%/}"
+          HEALTH_URL="${BASE_URL}/healthz"
+          echo "Checking ${HEALTH_URL}"
+          status_code="$(curl --silent --show-error --output /tmp/healthz-response \
+            --write-out "%{http_code}" --retry 3 --retry-all-errors "${HEALTH_URL}" || true)"
+          if [ "${status_code}" != "200" ]; then
+            echo "Health check failed for ${HEALTH_URL} with HTTP ${status_code}"
+            echo "APP_BASE_URL must be the public Railway origin only, for example https://your-app.up.railway.app"
+            echo "Do not include /healthz, /dashboard, or any other path in APP_BASE_URL."
+            echo "Response body:"
+            cat /tmp/healthz-response || true
+            exit 1
+          fi
 
       - name: Sync WHOOP
         env:
           APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
           INTERNAL_SYNC_TOKEN: ${{ secrets.INTERNAL_SYNC_TOKEN }}
         run: |
-          curl --fail --show-error --silent --retry 3 --retry-all-errors \
-            -X POST "${APP_BASE_URL%/}/internal/sync/whoop/reconcile" \
-            -H "X-Internal-Token: ${INTERNAL_SYNC_TOKEN}"
+          BASE_URL="${APP_BASE_URL%/}"
+          WHOOP_URL="${BASE_URL}/internal/sync/whoop/reconcile"
+          echo "Calling ${WHOOP_URL}"
+          status_code="$(curl --silent --show-error --output /tmp/whoop-sync-response \
+            --write-out "%{http_code}" --retry 3 --retry-all-errors \
+            -X POST "${WHOOP_URL}" \
+            -H "X-Internal-Token: ${INTERNAL_SYNC_TOKEN}" || true)"
+          if [ "${status_code}" != "200" ]; then
+            echo "WHOOP sync failed with HTTP ${status_code}"
+            echo "Response body:"
+            cat /tmp/whoop-sync-response || true
+            exit 1
+          fi
 
       - name: Sync Hevy
         env:
           APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
           INTERNAL_SYNC_TOKEN: ${{ secrets.INTERNAL_SYNC_TOKEN }}
         run: |
-          curl --fail --show-error --silent --retry 3 --retry-all-errors \
-            -X POST "${APP_BASE_URL%/}/internal/sync/hevy" \
-            -H "X-Internal-Token: ${INTERNAL_SYNC_TOKEN}"
+          BASE_URL="${APP_BASE_URL%/}"
+          HEVY_URL="${BASE_URL}/internal/sync/hevy"
+          echo "Calling ${HEVY_URL}"
+          status_code="$(curl --silent --show-error --output /tmp/hevy-sync-response \
+            --write-out "%{http_code}" --retry 3 --retry-all-errors \
+            -X POST "${HEVY_URL}" \
+            -H "X-Internal-Token: ${INTERNAL_SYNC_TOKEN}" || true)"
+          if [ "${status_code}" != "200" ]; then
+            echo "Hevy sync failed with HTTP ${status_code}"
+            echo "Response body:"
+            cat /tmp/hevy-sync-response || true
+            exit 1
+          fi

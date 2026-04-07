@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.core.security import require_internal_token, require_mfp_bridge_token
 from app.db.session import get_db
@@ -18,10 +18,16 @@ def mfp_sync_batch(payload: MfpSyncBatchRequest, db=Depends(get_db)) -> dict:
 @router.post("/sync/hevy", dependencies=[Depends(require_internal_token)])
 def sync_hevy(db=Depends(get_db)) -> dict:
     service = HevySyncService(db)
-    return service.sync()
+    try:
+        return service.sync()
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
 
 @router.post("/sync/whoop/reconcile", dependencies=[Depends(require_internal_token)])
 def sync_whoop(db=Depends(get_db)) -> dict:
     service = WhoopSyncService(db)
-    return service.reconcile()
+    try:
+        return service.reconcile()
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
